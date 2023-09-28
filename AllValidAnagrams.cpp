@@ -1,48 +1,51 @@
 #include <bits/stdc++.h>
 class Solution {
 public:
-
     vector<int> findAnagrams(string s, string p) 
     {
         vector<int> ans;
-        int len = p.length();
-        int index = 0;
-      
-      //Define unordered_maps
-  		unordered_map<char, int> MS, MP;
-  
+        int len = p.length();   
+
+        //S cannot contain an anagram of p if it is smaller than p
+        if(p.length() > s.length())
+            return {};
+
+        //Define unordered_maps
+  		unordered_map<int, int> MS, MP;
+        
         //Make the map for s
   		for (int i = 0; i < len; i++) {
             MS[s[i]]++;
         }
-  
+        
         //Make the map for p
   		for (int i = 0; i < len; i++) {
             MP[p[i]]++;
         }
   
   		//Check if the maps match
-        for(int start = 1; start < (s.length() - len); start++)
+        for(int start = 0; start <= (s.length() - len); start++)
         {
             bool flag = true;
-            for (int i = 97; i <= 123; i++) {
+
+            //Iterate through the lowercase letters
+            for (int i = 97; i <= 123 && flag; i++) {
+                //If they don't match at any point, it is not a valid anagram
                 if(MS[i] != MP[i])
                 {
                     flag = false;
-                    break;
                 }
             }
 
+            //Push the index to answer vector if the substring was a valid anagram
             if(flag)
-                ans.push_back(index);
-
-            //Update the S map
-            MS[index - 1]--;
-            MS[index + len + 1]++;
-
-            index += len;
+                ans.push_back(start);
+            
+            //Update the S map (pop off the left neighbor and push the right neighbor)
+            MS[s[start]]--;
+            MS[s[start + len]]++;
         }
-
+        
         return ans;
     }
 };
